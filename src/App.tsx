@@ -1,25 +1,32 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { ConfigProvider, Layout, Space } from "antd";
+import React, { useEffect, useState } from "react";
+import "./App.css";
+import { ContentComponent } from "./components/content";
+import { HeaderComponent } from "./components/header";
+import { LeftSideBar } from "./components/nav/left-side";
+import { RightSideBar } from "./components/nav/right-side";
 
 function App() {
+  const [selectedFolder, setSelectedFolder] = useState<string>()
+  useEffect(() => {
+    console.log(selectedFolder)
+  }, [selectedFolder, setSelectedFolder])
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <ConfigProvider theme={{ token: { colorPrimary: "#00b96b" } }}>
+      <Space
+        direction="vertical"
+        style={{ width: "100%", position: "absolute" }}
+      >
+        <Layout>
+          <HeaderComponent />
+          <Layout hasSider style={{ backgroundColor: 'rgb(233 232 232)'}}>
+            <LeftSideBar setSelectedFolder={setSelectedFolder} />
+            <ContentComponent selectedFolder={selectedFolder || ""} />
+            <RightSideBar selectedFolder={selectedFolder || ""} />
+          </Layout>
+        </Layout>
+      </Space>
+    </ConfigProvider>
   );
 }
 
