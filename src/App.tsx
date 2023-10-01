@@ -1,31 +1,20 @@
-import { ConfigProvider, Layout, Space } from "antd";
-import React, { useEffect, useState } from "react";
-import "./App.css";
-import { ContentComponent } from "./components/content";
-import { HeaderComponent } from "./components/header";
-import { LeftSideBar } from "./components/nav/left-side";
-import { RightSideBar } from "./components/nav/right-side";
+import { ConfigProvider } from "antd";
+import React from "react";
+import { Routes, Route } from "react-router-dom"
 
+import "./App.css";
+import { HomePage } from "./pages/home";
+import { LoginPage } from "./pages/login";
+import { RegisterPage } from "./pages/register";
 function App() {
-  const [selectedFolder, setSelectedFolder] = useState<string>()
-  useEffect(() => {
-    console.log(selectedFolder)
-  }, [selectedFolder, setSelectedFolder])
+
   return (
     <ConfigProvider theme={{ token: { colorPrimary: "#00b96b" } }}>
-      <Space
-        direction="vertical"
-        style={{ width: "100%", position: "absolute" }}
-      >
-        <Layout>
-          <HeaderComponent />
-          <Layout hasSider style={{ backgroundColor: 'rgb(233 232 232)'}}>
-            <LeftSideBar setSelectedFolder={setSelectedFolder} />
-            <ContentComponent selectedFolder={selectedFolder || ""} />
-            <RightSideBar selectedFolder={selectedFolder || ""} />
-          </Layout>
-        </Layout>
-      </Space>
+       <Routes>
+        <Route path="/" element={ <HomePage /> } />
+        <Route path="/register" element={ <RegisterPage /> } />
+        <Route path="/login" element={ <LoginPage /> } />
+      </Routes>
     </ConfigProvider>
   );
 }
