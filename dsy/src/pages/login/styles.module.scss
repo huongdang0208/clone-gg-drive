@@ -1,0 +1,26 @@
+.body{
+    background: url(background-den-dep-nhat-1.png);
+    background-size: cover;
+    font-size: 150px;
+    :global{
+        .ant-form ant-form-horizontal {
+            font-size: xx-large;
+            } 
+            :where(.css-dev-only-do-not-override-1npqyoo).ant-form-item .ant-form-item-label >label {
+                position: relative;
+                display: inline-flex;
+                align-items: center;
+                max-width: 100%;
+                height: 32px;
+                color: #fff;
+                font-size: 14px;
+        }
+        :where(.css-dev-only-do-not-override-1npqyoo).ant-checkbox-wrapper {
+            color: rgba(255, 255, 255, 0.88);
+        }
+        :where(.css-dev-only-do-not-override-1npqyoo).ant-btn-primary {
+            color: #000000;
+            background-color: #f4f4f4;
+            box-shadow: 0 2px 0 rgba(245, 22, 67, 0.12)}
+    }
+}
