@@ -3,11 +3,12 @@ import {
   CloudServerOutlined,
   SearchOutlined,
   SettingOutlined,
-  MoreOutlined
+  MoreOutlined,
 } from "@ant-design/icons";
 import React from "react";
 
 import styles from "./styles.module.scss";
+import { Link } from "react-router-dom";
 
 type Props = {};
 
@@ -33,6 +34,14 @@ export const HeaderComponent: React.FC<Props> = () => {
         </Col>
         <Col span={8}>
           <Space className={styles.space}>
+            <Space>
+              <Link to="/register">
+                Register/
+              </Link>
+              <Link to="/login">
+                Login
+              </Link>
+            </Space>
             <SettingOutlined style={{ fontSize: "1.5rem", color: "#fffff" }} />
           </Space>
         </Col>

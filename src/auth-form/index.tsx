@@ -25,7 +25,7 @@ export const AuthForm: React.FC<Props> = ({ isRegister }) => {
       name="basic"
       labelCol={{ span: 8 }}
       wrapperCol={{ span: 16 }}
-      style={{ maxWidth: 600 }}
+      style={{ maxWidth: 600, border: '1px solid', borderRadius: '1rem', padding: '3rem' }}
       initialValues={{ remember: true }}
       onFinish={onFinish}
       onFinishFailed={onFinishFailed}
