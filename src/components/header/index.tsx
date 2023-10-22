@@ -1,11 +1,20 @@
-import { Col, Input, Layout, Row, Space, Typography } from "antd";
+import {
+  Col,
+  Dropdown,
+  Input,
+  Layout,
+  MenuProps,
+  Row,
+  Space,
+  Typography,
+} from "antd";
 import {
   CloudServerOutlined,
   SearchOutlined,
   SettingOutlined,
   MoreOutlined,
 } from "@ant-design/icons";
-import React from "react";
+import React, { useState } from "react";
 
 import styles from "./styles.module.scss";
 import { Link } from "react-router-dom";
@@ -14,7 +23,23 @@ type Props = {};
 
 const { Header } = Layout;
 
+const items: MenuProps["items"] = [
+  {
+    label: "Logout",
+    key: "logout",
+  },
+];
+
 export const HeaderComponent: React.FC<Props> = () => {
+  const [open, setOpen] = useState(false);
+  const handleMenuClick: MenuProps["onClick"] = (e) => {
+    if (e.key === "logout") {
+      setOpen(false);
+    }
+  };
+  const handleOpenChange = (flag: boolean) => {
+    setOpen(flag);
+  };
   return (
     <Header className={styles.header}>
       <Row>
@@ -34,15 +59,31 @@ export const HeaderComponent: React.FC<Props> = () => {
         </Col>
         <Col span={8}>
           <Space className={styles.space}>
-            <Space>
-              <Link to="/register">
-                Register/
-              </Link>
-              <Link to="/login">
-                Login
-              </Link>
+            <Space style={{ marginRight: "2rem" }}>
+              <Link to="/register">Register /</Link>
+              <Link to="/login">Login</Link>
             </Space>
-            <SettingOutlined style={{ fontSize: "1.5rem", color: "#fffff" }} />
+            <Dropdown
+              menu={{
+                items,
+                onClick: handleMenuClick,
+              }}
+              onOpenChange={handleOpenChange}
+              open={open}
+              overlayStyle={{ width: "8rem", fontWeight: "500" }}
+              placement="bottom"
+              trigger={["click"]}
+            >
+              <Space>
+                <SettingOutlined
+                  style={{
+                    fontSize: "1.5rem",
+                    color: "#fffff",
+                    marginTop: "0.25rem",
+                  }}
+                />
+              </Space>
+            </Dropdown>
           </Space>
         </Col>
       </Row>

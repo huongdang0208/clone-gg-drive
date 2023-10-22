@@ -4,9 +4,10 @@ import { FileOutlined, FolderOutlined } from "@ant-design/icons";
 
 import styles from './styles.module.scss';
 import { Item } from "./item";
+import { Folder } from "../../types/folder.type";
 
 type Props = {
-  selectedFolder: string;
+  selectedFolder: Folder | undefined;
 };
 
 const { Content } = Layout;
@@ -25,7 +26,7 @@ export const ContentComponent: React.FC<Props> = ({ selectedFolder }) => {
       </Row>
       <Row style={{ marginTop: '2rem' }}>
         <Col span={4}>
-          <Item selectedFolder={selectedFolder || ''} />
+          <Item selectedFolder={selectedFolder || undefined} />
         </Col>
       </Row>
       <Row>

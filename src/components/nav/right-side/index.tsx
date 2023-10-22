@@ -3,9 +3,10 @@ import React from "react";
 import { FolderOpenOutlined } from "@ant-design/icons";
 
 import styles from "./styles.module.scss";
+import { Folder } from "../../../types/folder.type";
 
 type Props = {
-  selectedFolder: string;
+  selectedFolder: Folder | undefined;
 };
 
 const { Sider } = Layout;
@@ -32,7 +33,7 @@ export const RightSideBar: React.FC<Props> = ({ selectedFolder }) => {
         <Col span={24}>
           <Space color="success">
             <FolderOpenOutlined />
-            {selectedFolder}
+            {selectedFolder?.foldername}
           </Space>
         </Col>
         <Divider />

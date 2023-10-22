@@ -17,6 +17,7 @@ import {
 } from "@ant-design/icons";
 
 import styles from "./styles.module.scss";
+import { Folder } from "../../../types/folder.type";
 
 type MenuItem = Required<MenuProps>["items"][number];
 
@@ -37,7 +38,7 @@ function getItem(
 }
 
 type Props = {
-  selectedFolder: string;
+  selectedFolder: Folder | undefined;
 };
 export const Item: React.FC<Props> = ({ selectedFolder }) => {
   const [showArrow, setShowArrow] = useState(true);
@@ -96,7 +97,7 @@ export const Item: React.FC<Props> = ({ selectedFolder }) => {
       <Space color="success" className={styles.space}>
         <span>
           <FolderOutlined />
-          {selectedFolder}
+          {selectedFolder?.foldername}
         </span>
         <span>
           <Popover

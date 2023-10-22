@@ -1,13 +1,16 @@
 import {
   Button,
+  Form,
+  Input,
   Layout,
   Menu,
   MenuProps,
   message,
+  Modal,
   Popover,
   Upload,
 } from "antd";
-import React, { Dispatch, SetStateAction, useState } from "react";
+import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import {
   FolderOutlined,
   PlusOutlined,
@@ -20,82 +23,39 @@ import type { UploadChangeParam } from "antd/es/upload";
 
 import { Folder } from "../../../types/folder.type";
 import styles from "./styles.module.scss";
+import { myFolder } from "../../../data/mock.data";
 
 type Props = {
-  setSelectedFolder: Dispatch<SetStateAction<string | undefined>>;
+  setSelectedFolder: Dispatch<SetStateAction<Folder | undefined>>;
 };
 type MenuItem = Required<MenuProps>["items"][number];
 
 const { Sider } = Layout;
 
-export const myFolder: Folder[] = [
-  {
-    id: "1",
-    foldername: "My Storage",
-    mimetype: "",
-    shared: false,
-    copyable: false,
-    hasThumbnail: false,
-    owner: "owner",
-    hasChildren: true,
-    children: [
-      {
-        id: "123-abc",
-        foldername: "Copy Folder 1",
-        mimetype: "audio/mpeg",
-        hasThumbnail: false,
-        shared: false,
-        owner: "Thu Huong",
-        copyable: false,
-      },
-      {
-        id: "123-abcd",
-        foldername: "Copy Folder 2",
-        mimetype: "audio/mpeg",
-        hasThumbnail: false,
-        shared: false,
-        owner: "Thu Huong",
-        copyable: false,
-        hasChildren: true,
-        children: [
-          {
-            id: "123-abcde",
-            foldername: "Copy Folder 3",
-            mimetype: "audio/mpeg",
-            hasThumbnail: false,
-            shared: false,
-            owner: "Thu Huong",
-            copyable: false,
-            hasChildren: false,
-          },
-          {
-            id: "123-abcdef",
-            foldername: "Copy Folder 4",
-            mimetype: "audio/mpeg",
-            hasThumbnail: false,
-            shared: false,
-            owner: "Thu Huong",
-            copyable: false,
-            hasChildren: false,
-          },
-        ],
-      },
-    ],
-  },
-];
-
 export const LeftSideBar: React.FC<Props> = ({ setSelectedFolder }) => {
+  const [mockData, setMockData] = useState<Folder[]>(myFolder);
   const [collapsed, setCollapsed] = useState(false);
   const [loading, setLoading] = useState(false);
   const [imageUrl, setImageUrl] = useState<string>();
   const [open, setOpen] = useState(false);
-  const [openKeys, setOpenKeys] = useState(["sub1"]);
+  const [openKeys, setOpenKeys] = useState([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [action, setAction] = useState("");
+
+  const props: UploadProps = {
+    name: 'file',
+    action: 'https://run.mocky.io/v3/435e224c-44fb-4773-9faf-380c5e6a2188',
+    headers: {
+      authorization: 'authorization-text',
+    },
+  };
+
   const getItem = (
     label: React.ReactNode,
     key: React.Key,
     icon?: React.ReactNode,
     children?: MenuItem[],
-    onClick?: Function,
+    onClick?: Function
   ): MenuItem => {
     return {
       key,
@@ -105,7 +65,7 @@ export const LeftSideBar: React.FC<Props> = ({ setSelectedFolder }) => {
     } as MenuItem;
   };
 
-  const items: MenuItem[] = myFolder.map((folder: Folder) => {
+  const items: MenuItem[] = mockData.map((folder: Folder) => {
     return getItem(
       folder.foldername,
       folder.id,
@@ -130,13 +90,18 @@ export const LeftSideBar: React.FC<Props> = ({ setSelectedFolder }) => {
     );
   });
 
-  const onSelectFolder = (key: string) => {
-    setSelectedFolder(key);
-  };
-
-  const onOpenChange = (openKeys: string[]) => {
-    if (openKeys.length > 0) {
-      setSelectedFolder(openKeys[0]);
+  const onSelectFolder = (item: any) => {
+    console.log(item);
+    if (item.keyPath.length == 2) {
+      const folder = mockData[0]?.children?.find(
+        (child) => child.id === item.keyPath[0]
+      );
+      setSelectedFolder(folder);
+    } else {
+      const folder = mockData[0]?.children
+        ?.find((child) => child.id === item.keyPath[1])
+        ?.children?.find((subChild) => subChild?.id === item.keyPath[0]);
+      setSelectedFolder(folder);
     }
   };
 
@@ -182,8 +147,14 @@ export const LeftSideBar: React.FC<Props> = ({ setSelectedFolder }) => {
   );
 
   const options: MenuItem[] = [
-    getItem("New Folder", "newFolder", <FolderAddOutlined />,),
-    getItem("Upload file", "uploadFile", <FileAddOutlined />),
+    getItem("New Folder", "newFolder", <FolderAddOutlined />),
+    getItem(
+      "",
+      "uploadFile",
+      <Upload {...props}>
+        <Button icon={<FileAddOutlined />}>Click to Upload</Button>
+      </Upload>
+    ),
     getItem("Upload Folder", "uploadFolder", <FolderAddOutlined />),
   ];
 
@@ -192,19 +163,39 @@ export const LeftSideBar: React.FC<Props> = ({ setSelectedFolder }) => {
       <Menu
         mode="inline"
         openKeys={openKeys}
-        onOpenChange={onOpenChange}
         style={{ width: 256 }}
         items={options}
+        onClick={({ key }) => onSelectAction(key)}
       />
     </div>
   );
 
-  const hide = () => {
+  const onSelectAction = (key: string) => {
+    setAction(key);
+    if (key === 'newFolder') {
+      setIsModalOpen(true);
+    }
     setOpen(false);
   };
 
   const handleOpenChange = (newOpen: boolean) => {
     setOpen(newOpen);
+  };
+
+  const onFinish = (values: any) => {
+    console.log("Success:", values);
+    myFolder[0]?.children?.push({
+      id: values.foldername,
+      foldername: values.foldername,
+      mimetype: "",
+      shared: false,
+      copyable: false,
+      hasThumbnail: false,
+      owner: "owner",
+      hasChildren: false,
+    });
+    setMockData([...myFolder]);
+    setIsModalOpen(false);
   };
 
   return (
@@ -237,18 +228,47 @@ export const LeftSideBar: React.FC<Props> = ({ setSelectedFolder }) => {
         onOpenChange={handleOpenChange}
         placement="rightTop"
       >
-        <Button type="primary" icon={<PlusOutlined />} className={styles.btnUpload}>
+        <Button
+          type="primary"
+          icon={<PlusOutlined />}
+          className={styles.btnUpload}
+        >
           Upload
         </Button>
       </Popover>
       <Menu
         theme="dark"
-        defaultSelectedKeys={["1"]}
+        defaultSelectedKeys={["my_folder"]}
         mode="inline"
         items={items}
-        onClick={({ key }) => onSelectFolder(key)}
-        onOpenChange={(openKeys: string[]) => onOpenChange(openKeys)}
+        onSelect={(item) => onSelectFolder(item)}
       />
+      <Modal
+        open={isModalOpen}
+        onOk={() => setIsModalOpen(false)}
+        onCancel={() => setIsModalOpen(false)}
+        footer={null}
+        className={styles.modal}
+      >
+        {action === "newFolder" && (
+          <Form autoComplete="off" onFinish={onFinish}>
+            <Form.Item
+              label="Folder name"
+              name="foldername"
+              rules={[
+                { required: true, message: "Please input your folder name!" },
+              ]}
+            >
+              <Input />
+            </Form.Item>
+            <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
+              <Button type="primary" htmlType="submit">
+                OK
+              </Button>
+            </Form.Item>
+          </Form>
+        )}
+      </Modal>
     </Sider>
   );
 };
