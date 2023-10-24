@@ -8,18 +8,17 @@ import {
   message,
   Modal,
   Popover,
+  Typography,
   Upload,
 } from "antd";
-import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
+import React, { Dispatch, SetStateAction, useState } from "react";
 import {
   FolderOutlined,
   PlusOutlined,
-  LoadingOutlined,
   FolderAddOutlined,
   FileAddOutlined,
 } from "@ant-design/icons";
 import type { RcFile, UploadFile, UploadProps } from "antd/es/upload/interface";
-import type { UploadChangeParam } from "antd/es/upload";
 
 import { Folder } from "../../../types/folder.type";
 import styles from "./styles.module.scss";
@@ -35,18 +34,16 @@ const { Sider } = Layout;
 export const LeftSideBar: React.FC<Props> = ({ setSelectedFolder }) => {
   const [mockData, setMockData] = useState<Folder[]>(myFolder);
   const [collapsed, setCollapsed] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [imageUrl, setImageUrl] = useState<string>();
   const [open, setOpen] = useState(false);
   const [openKeys, setOpenKeys] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [action, setAction] = useState("");
 
   const props: UploadProps = {
-    name: 'file',
-    action: 'https://run.mocky.io/v3/435e224c-44fb-4773-9faf-380c5e6a2188',
+    name: "file",
+    action: "https://run.mocky.io/v3/435e224c-44fb-4773-9faf-380c5e6a2188",
     headers: {
-      authorization: 'authorization-text',
+      authorization: "authorization-text",
     },
   };
 
@@ -117,45 +114,31 @@ export const LeftSideBar: React.FC<Props> = ({ setSelectedFolder }) => {
     return isJpgOrPng && isLt2M;
   };
 
-  const getBase64 = (img: RcFile, callback: (url: string) => void) => {
-    const reader = new FileReader();
-    reader.addEventListener("load", () => callback(reader.result as string));
-    reader.readAsDataURL(img);
-  };
-
-  const handleChange: UploadProps["onChange"] = (
-    info: UploadChangeParam<UploadFile>
-  ) => {
-    if (info.file.status === "uploading") {
-      setLoading(true);
-      return;
-    }
-    if (info.file.status === "done") {
-      // Get this url from response in real world.
-      getBase64(info.file.originFileObj as RcFile, (url) => {
-        setLoading(false);
-        setImageUrl(url);
-      });
-    }
-  };
-
-  const uploadButton = (
-    <div>
-      {loading ? <LoadingOutlined /> : <PlusOutlined />}
-      <div>Upload</div>
-    </div>
-  );
-
   const options: MenuItem[] = [
     getItem("New Folder", "newFolder", <FolderAddOutlined />),
     getItem(
       "",
       "uploadFile",
       <Upload {...props}>
-        <Button icon={<FileAddOutlined />}>Click to Upload</Button>
+        <Typography>
+          <FileAddOutlined style={{ marginRight: "10px" }} />
+          Upload File
+        </Typography>
       </Upload>
     ),
-    getItem("Upload Folder", "uploadFolder", <FolderAddOutlined />),
+    getItem(
+      "",
+      "uploadFolder",
+      <Upload
+        action="https://run.mocky.io/v3/435e224c-44fb-4773-9faf-380c5e6a2188"
+        directory
+      >
+        <Typography>
+          <FolderAddOutlined style={{ marginRight: "10px" }} />
+          Upload Directory
+        </Typography>
+      </Upload>
+    ),
   ];
 
   const content = (
@@ -172,7 +155,7 @@ export const LeftSideBar: React.FC<Props> = ({ setSelectedFolder }) => {
 
   const onSelectAction = (key: string) => {
     setAction(key);
-    if (key === 'newFolder') {
+    if (key === "newFolder") {
       setIsModalOpen(true);
     }
     setOpen(false);
